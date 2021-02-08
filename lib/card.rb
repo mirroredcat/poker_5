@@ -1,7 +1,7 @@
 class Card
 
-  attr_reader :value, :sym, :used
-  def initialize(value, sym)
+  attr_reader :value, :sym
+  def initialize(value, sym = nil)
     @value = value
     @sym = sym
     @used = false
@@ -12,9 +12,9 @@ class Card
     "#{value}#{sym}"
   end
 
-  def use_card
-    @used = true
-  end
+  # def use_card
+  #   @used = true
+  # end
 
 
 end 

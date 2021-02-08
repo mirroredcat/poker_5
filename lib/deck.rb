@@ -4,7 +4,7 @@ class Deck
 
   @@suits = ["\u2664", "\u2661", "\u2667", "\u2662"]
   @@ordered_deck = @@suits.product((2..10).chain(%w(J Q K A)).to_a)
-
+  # 2.times {@@ordered_deck << [nil,"JOKER"]}
   attr_reader :deck
 
   def initialize 
@@ -20,16 +20,21 @@ class Deck
   end
 
   def cards_left
-    @deck.count{|card| !card.used}
+    @deck.count
   end
 
   def deal
     deal_pack = []
-    5.times do
-      deal_pack << @deck.shift
-      deal_pack[-1].use_card
-    end
+    5.times {deal_pack << @deck.shift}
     deal_pack
+  end
+
+  def draw
+    @deck.shift
+  end
+
+  def discard
+    @deck.delete_at(0)
   end
 
 end
