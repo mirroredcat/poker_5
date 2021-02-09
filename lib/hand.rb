@@ -1,26 +1,75 @@
+require_relative 'card'
+
 class Hand
-  
+  attr_reader :current_hand
   def initialize(hand)
     @current_hand = hand
   end
 
-  def sort_cards
-    cards = []
-    if @current_hand.length.odd?
-      t = @current_hand.split("")
-      t.each_with_index{|el, i|
-        if el == "1"
-          t[i] += t[i+1]
-          t.delete_at(i+1)
-          break
-        end
-      }
-      t.each_slice(2){|el| cards << el}
+  def score
+    vals = sort_cards
+    if three && pair
+    th = vals.select { |e| vals.count(e) == 3 }
+    pa = vals.select { |e| vals.count(e) == 2 }
+    [3, [th[0],pa[0]]]
+    elsif pair
+      el = []
+      vals.each{|e| el << e if vals.count(e) == 2}
+      return el.length == 1 ? [8, el[0]] : [7, el]
+    elsif three
+      vals.each{|e| return [6, e] if vals.count(e) == 3}
+    elsif four
+      vals.each{|e| return [2, e] if vals.count(e) == 4}
+    elsif same_symbol && !consecutive
+      [ 4, vals.sort.reverse]
+    elsif consecutive && !same_symbol
+      [ 5, vals.max]
+    elsif same_symbol && consecutive
+      [ 1, vals.max]
     else
-      @current_hand.split("").each_slice(2){|el| cards << el}
+      [ 9, vals.sort.reverse]
     end
-    cards = cards.map{|val,sym| val.to_i == 0 ?  [translate(val), sym] : [val.to_i, sym] }
-    cards.sort.reverse.map{|val,sym| val > 10 ? [translate_nr(val), sym] : [val, sym] }.join
+  end
+
+  def sort_cards #translate and order values
+    get_values.map!{|el| !el.is_a?(Integer) ? translate(el) : el}.sort.reverse
+  end
+
+  def pair
+    t = sort_cards
+    t.each {|el| return true if t.count(el) == 2}
+    false
+  end
+
+  def three
+    t = sort_cards
+    t.each {|el| return true if t.count(el) == 3}
+    false
+  end
+
+  def four
+    t = sort_cards
+    t.each {|el| return true if t.count(el) == 4}
+    false
+  end
+
+  def same_symbol
+    syms = []
+    @current_hand.each{|card| syms << card.sym}
+    syms.uniq.length == 1
+  end
+
+  def consecutive
+    t = sort_cards.reverse
+    t == (t[0]..t[-1]).each.to_a
+  end
+
+  private
+
+  def get_values
+    values = []
+    @current_hand.each{|card| values << card.value}
+    values
   end
 
 
@@ -37,17 +86,5 @@ class Hand
     end
   end
 
-  def translate_nr(nr)
-    case nr
-    when 11
-      "J"
-    when 12
-      "Q"
-    when 13
-      "K"
-    when 14
-      "A"
-    end
-  end
 
 end
