@@ -240,45 +240,105 @@ describe Player do
   let(:player) {Player.new("Dave", [card1,card2,card3,card4,card5])}
 
   describe '#initialize' do
+
    it 'returns the name' do
     expect(player.name).to eq('Dave')
    end
+
    it 'does not return hand' do
-    expect{player.cards}.to raise_error
+    expect{player.cards}.to raise_error(NoMethodError)
    end
 
    it 'has skipped set to false' do
     expect(player.skipped).to eq(false)
    end
 
+   it 'has pot set to 50' do
+    expect(player.pot).to eq(50)
+   end
+
   end
 
   describe '#next_move' do
 
-    it 'prints "what is your next move? fold/see/raise" '
+    it 'prints "what is your next move? fold/see/raise" ' do
+      input = double("fold\n", :chomp=>'fold')
+      allow(player).to receive(:gets).and_return(input)
+
+      expect { player.next_move(10) }.to output("What is your next move? fold/see/raise\n").to_stdout
+    end
+
+    it 'calls gets.chomp to get input from the user' do
+      input = double("fold\n", :chomp=>'fold')
+      allow(player).to receive(:gets).and_return(input)
+
+      expect(input).to receive(:chomp)
+      expect(player).to receive(:gets)
+      player.next_move(10)
+    end
+
+    it 'raises an error if answer is unavailable' do
+      allow(player).to receive(:gets).and_return('potato')
+      expect{player.next_move(10)}.to raise_error('Not possible')
+    end
 
     context 'user chooses fold' do
-
-      it 'turns on skipped '
+      it 'turns on skipped ' do
+        allow(player).to receive(:gets).and_return('fold')
+        player.next_move(25)
+        expect(player.skipped).to eq (true)
+      end
 
     end
 
-    context 'user chooses bet' do
+    context 'user chooses see' do
 
-      it 'reduces the players pot by the betting amount' 
+      it 'reduces the players pot by the betting amount' do
+        allow(player).to receive(:get_answer).and_return('see')
+        player.next_move(10)
+        expect(player.pot).to eq(40)
+      end
 
     end
 
     context 'user chooses raise' do
+      
+      it 'reduces the pot by the raised amount' do
+        allow(player).to receive(:gets).and_return('raise')
+        allow(player).to receive(:raise_amount).and_return(20)
+        player.next_move(10)
+        expect(player.pot).to eq(30)
+      end
+    end
+  end
 
-      it 'prints "How much?"'
+  describe '#raise_amount' do
 
-      it 'returns a value that is highr than the bet amount'
+    it 'prints "How much?"' do
+      input = double("20\n", :chomp=>'20')
+      allow(player).to receive(:gets).and_return(input)
 
-      it 'reduces the player pot by raise amount'
-
+      expect { player.raise_amount(10) }.to output("How much?\n").to_stdout
     end
 
+    it 'calls gets.chomp to get input from the user' do
+      input = double("20\n", :chomp=>'20')
+      allow(player).to receive(:gets).and_return(input)
+
+      expect(input).to receive(:chomp)
+      expect(player).to receive(:gets)
+      player.raise_amount(10)
+    end
+
+    it 'returns the raised amount as an integer' do
+      expect(player.raise_amount(10)).to be_a Integer
+    end
+
+    it 'checks that the raised amount is higher than the bet' do
+      allow(player).to receive(:gets).and_return("20")
+      expect{player.raise_amount(10)}.to_not raise_error
+      expect{player.raise_amount(30)}.to raise_error('Too little')
+    end
 
   end
 
@@ -304,21 +364,42 @@ describe Player do
 
 
 
-  describe '#skipped' do
+  describe '#toggle_skipped' do
 
-    it 'toggles the skip attribute'
+    it 'toggles the skip attribute' do
+      player.toggle_skipped
+      expect(player.skipped).to eq(true)
+      player.toggle_skipped
+      expect(player.skipped).to eq(false)
+    end
 
   end
 
   describe '#bet' do
 
-    it 'prints "How much would like to bet?"'
+    it 'prints "How much would you like to bet?"' do
+      input = double("55\n", :chomp=>'55')
+      allow(player).to receive(:gets).and_return(input)
 
-    it 'returns the betted amount'
+      expect { player.bet }.to output("How much would you like to bet?\n").to_stdout
+    end
+
+    it 'calls gets.chomp to get input from the user' do
+      input = double("55\n", :chomp=>'55')
+      allow(player).to receive(:gets).and_return(input)
+
+      expect(input).to receive(:chomp)
+      expect(player).to receive(:gets)
+      player.bet
+    end
+
+    it 'returns the betted amount as an integer' do
+      expect(player.bet).to be_a Integer
+    end
 
   end
 
-  describe '#show_cards' do 
+  describe '#show_cards' do
 
     it 'returns the hand of the player, as objects' do
       expect(player.show_cards).to eq([card1,card2,card3,card4,card5])
