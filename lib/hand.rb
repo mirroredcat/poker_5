@@ -26,12 +26,12 @@ class Hand
       el = []
       vals.each{|e| el << e if vals.count(e) == 3 && !el.include?(e)}
       vals.delete(el[0])
-      [6, e + vals]
+      [6, el + vals]
     elsif four
       el = []
       vals.each{|e| el << e if vals.count(e) == 4 && !el.include?(e)}
       vals.delete(el[0])
-      [2 , e + vals]
+      [2 , el + vals]
     elsif same_symbol && !consecutive
       [ 4, vals.sort.reverse]
     elsif consecutive && !same_symbol

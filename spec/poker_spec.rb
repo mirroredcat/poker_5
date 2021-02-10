@@ -151,9 +151,9 @@ describe Hand do
     it 'returns appropriate score for hand and comparing value' do
       expect(hand.score).to eq([9,[13,8,6,5,2]])
       expect(hand2.score).to eq([1, 11])
-      expect(hand3.score).to eq([6,8])
+      expect(hand3.score).to eq([6,[8,13,5]])
       expect(hand4.score).to eq([3,[8,7]])
-      expect(hand5.score).to eq([2, 8])
+      expect(hand5.score).to eq([2, [8, 11]])
       expect(hand6.score).to eq([7, [8, 7, 6]])
     end
 
@@ -228,5 +228,101 @@ end
 
 
 describe Player do
-  
+  let(:card1) {double("card", :value => 8, :sym =>"♤" )}  #card1 8♤
+  let(:card2) {double("card", :value => "K", :sym =>"♤" )}#card2 K♤
+  let(:card3) {double("card", :value => 10, :sym =>"♤" )} #card3  10♤
+  let(:card4) {double("card", :value => 7, :sym =>"♢" )}  #card4  7♢
+  let(:card5) {double("card", :value => 8, :sym =>"♢" )}  #card5  8♢
+
+  let(:card6) {double("card", :value => 8, :sym =>"♧" )}  #card6  8♧
+  let(:card7) {double("card", :value => 2, :sym =>"♤" )}  #card7 2♤
+
+  let(:player) {Player.new("Dave", [card1,card2,card3,card4,card5])}
+
+  describe '#initialize' do
+   it 'returns the name' do
+    expect(player.name).to eq('Dave')
+   end
+   it 'does not return hand' do
+    expect(player.hand).to_not eq([card1,card2,card3,card4,card5])
+   end
+
+   it 'has skipped set to false' do
+    expect(player.skipped).to eq(false)
+   end
+
+  end
+
+  describe '#next_move' do
+
+    it 'prints "what is your next move? fold/see/raise" '
+
+    context 'user chooses fold' do
+
+      it 'turns on skipped '
+
+    end
+
+    context 'user chooses bet' do
+
+      it 'reduces the players pot by the betting amount' 
+
+    end
+
+    context 'user chooses raise' do
+
+      it 'prints "How much?"'
+
+      it 'returns a value that is highr than the bet amount'
+
+      it 'reduces the player pot by raise amount'
+
+    end
+
+
+  end
+
+  describe '#discard' do
+
+    it 'prints "Would you like to discard cards?"'
+
+    it 'returns yes/no'
+
+    context 'user says yes' do
+
+      it 'prints "Which cards?"'
+
+      it 'returns the selected cards'
+
+      it 'removes selected cards'
+
+      it 'replaces the cards with new ones'
+
+    end
+
+  end
+
+
+
+  describe '#skipped' do
+
+    it 'toggles the skip attribute'
+
+  end
+
+  describe '#bet' do
+
+    it 'prints "How much would like to bet?"'
+
+    it 'returns the betted amount'
+
+  end
+
+  describe '#show_cards' do 
+
+    it 'returns the hand of the player, as objects'
+
+  end
+
+
 end
