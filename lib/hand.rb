@@ -9,17 +9,29 @@ class Hand
   def score
     vals = sort_cards
     if three && pair
-    th = vals.select { |e| vals.count(e) == 3 }
-    pa = vals.select { |e| vals.count(e) == 2 }
-    [3, [th[0],pa[0]]]
+      th = vals.select { |e| vals.count(e) == 3 }
+      pa = vals.select { |e| vals.count(e) == 2 }
+      [3, [th[0],pa[0]]]
     elsif pair
       el = []
-      vals.each{|e| el << e if vals.count(e) == 2}
-      return el.length == 1 ? [8, el[0]] : [7, el]
+      vals.each{|e| el << e if vals.count(e) == 2 && !el.include?(e)}
+      if el.length == 1
+        vals.delete(el[0])
+        [8, el + vals ]
+      else
+        vals.reject!{|t| el.include?(t)}
+        [7, el + vals]
+      end
     elsif three
-      vals.each{|e| return [6, e] if vals.count(e) == 3}
+      el = []
+      vals.each{|e| el << e if vals.count(e) == 3 && !el.include?(e)}
+      vals.delete(el[0])
+      [6, e + vals]
     elsif four
-      vals.each{|e| return [2, e] if vals.count(e) == 4}
+      el = []
+      vals.each{|e| el << e if vals.count(e) == 4 && !el.include?(e)}
+      vals.delete(el[0])
+      [2 , e + vals]
     elsif same_symbol && !consecutive
       [ 4, vals.sort.reverse]
     elsif consecutive && !same_symbol

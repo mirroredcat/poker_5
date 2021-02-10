@@ -2,6 +2,7 @@ require 'rspec'
 require 'card'
 require 'deck'
 require 'hand'
+require 'player'
 
 describe Card do
   subject(:card) {Card.new(2, "\u2664")}
@@ -145,6 +146,7 @@ describe Hand do
     let(:hand3) {Hand.new([card4,card10,card7,card6,card13])} # 8♤K♤8♧8♡5♢  3 of kind, val
     let(:hand4) {Hand.new([card5,card4,card9,card6,card7])} # 7♤8♤7♢8♡8♧ full house, 3,2
     let(:hand5) {Hand.new([card4, card1,card8,card6,card7])} # 8♤J♤8♢8♡8♧  4 of kind, val
+    let(:hand6) {Hand.new([card5, card7, card12, card8, card9])} # 7♤8♧6♢8♢7♢
 
     it 'returns appropriate score for hand and comparing value' do
       expect(hand.score).to eq([9,[13,8,6,5,2]])
@@ -152,6 +154,7 @@ describe Hand do
       expect(hand3.score).to eq([6,8])
       expect(hand4.score).to eq([3,[8,7]])
       expect(hand5.score).to eq([2, 8])
+      expect(hand6.score).to eq([7, [8, 7, 6]])
     end
 
   end
@@ -221,4 +224,9 @@ describe Hand do
     end
 
   end
+end
+
+
+describe Player do
+  
 end
