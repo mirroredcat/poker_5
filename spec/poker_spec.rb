@@ -244,7 +244,7 @@ describe Player do
     expect(player.name).to eq('Dave')
    end
    it 'does not return hand' do
-    expect(player.hand).to_not eq([card1,card2,card3,card4,card5])
+    expect{player.cards}.to raise_error
    end
 
    it 'has skipped set to false' do
@@ -320,7 +320,9 @@ describe Player do
 
   describe '#show_cards' do 
 
-    it 'returns the hand of the player, as objects'
+    it 'returns the hand of the player, as objects' do
+      expect(player.show_cards).to eq([card1,card2,card3,card4,card5])
+    end
 
   end
 
