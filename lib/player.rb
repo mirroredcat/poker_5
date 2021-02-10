@@ -3,6 +3,7 @@ require_relative 'card'
 class Player
 
   attr_reader :name, :skipped
+  attr_writer :cards
   attr_accessor :pot
 
   def initialize(name, cards, pot = 50)
@@ -40,6 +41,13 @@ class Player
     raise 'Too little' unless val > bet
 
     val
+  end
+
+  def discard
+    puts 'Select card'
+    x = gets.chomp.to_i
+    raise 'Not allowed' unless x < @cards.length
+    @cards.delete_at(x)
   end
 
   def show_cards

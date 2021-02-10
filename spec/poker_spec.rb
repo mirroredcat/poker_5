@@ -344,21 +344,37 @@ describe Player do
 
   describe '#discard' do
 
-    it 'prints "Would you like to discard cards?"'
+    it 'prints "Select card"' do
+      input = double("1\n", :chomp=>'1')
+      allow(player).to receive(:gets).and_return(input)
 
-    it 'returns yes/no'
+      expect { player.discard }.to output("Select card\n").to_stdout
+    end 
 
-    context 'user says yes' do
+    it 'calls gets.chomp to get input from the user' do
+      input = double("1\n", :chomp=>'1')
+      allow(player).to receive(:gets).and_return(input)
 
-      it 'prints "Which cards?"'
-
-      it 'returns the selected cards'
-
-      it 'removes selected cards'
-
-      it 'replaces the cards with new ones'
-
+      expect(input).to receive(:chomp)
+      expect(player).to receive(:gets)
+      player.discard
     end
+
+    it 'raises an error if index is not good' do
+      allow(player).to receive(:gets).and_return('6')
+      expect {player.discard}.to raise_error("Not allowed")
+    end
+
+    it 'removes selected card' do
+      allow(player).to receive(:gets).and_return('2')
+      player.discard
+      expect(player.show_cards.length).to eq(4)
+    end
+
+
+    
+
+
 
   end
 
@@ -409,3 +425,15 @@ describe Player do
 
 
 end
+
+
+
+
+# it 'prints "Would you like to discard cards?"' do
+#   input = double("Y\n", :chomp=>'Y')
+#   allow(player).to receive(:gets).and_return(input)
+
+#   expect { player.discard }.to output("Would you like to discard cards?\n").to_stdout
+# end
+
+# it 'returns yes/no'
