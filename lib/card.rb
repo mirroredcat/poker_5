@@ -4,8 +4,7 @@ class Card
   def initialize(value, sym = nil)
     @value = value
     @sym = sym
-    @used = false
-    
+    @used = false  
   end
 
   def render
@@ -15,6 +14,5 @@ class Card
   # def use_card
   #   @used = true
   # end
-
 
 end 

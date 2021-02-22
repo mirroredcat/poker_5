@@ -3,6 +3,7 @@ require 'card'
 require 'deck'
 require 'hand'
 require 'player'
+require 'poker'
 
 describe Card do
   subject(:card) {Card.new(2, "\u2664")}
@@ -362,7 +363,7 @@ describe Player do
 
     it 'raises an error if index is not good' do
       allow(player).to receive(:gets).and_return('6')
-      expect {player.discard}.to raise_error("Not allowed")
+      expect {player.discard}.to raise_error('Not allowed')
     end
 
     it 'removes selected card' do
@@ -370,10 +371,6 @@ describe Player do
       player.discard
       expect(player.show_cards.length).to eq(4)
     end
-
-
-    
-
 
 
   end
@@ -426,7 +423,51 @@ describe Player do
 
 end
 
+describe Poker do
+  subject(:game) {Poker.new('Jim')}
 
+  describe '#initialize' do
+    it 'pot value is zero' do
+      expect(game.pot).to eq(0)
+    end
+
+    it 'has an empty deck' do
+      expect(game.deck.length).to eq(0)
+    end
+
+    it 'has player objects as players' do
+      expect(game.current_player).to be_a Player
+    end
+
+  end
+
+  describe '#next_player' do
+    let!(:initial_players) {game.players}
+    it 'rotates the players' do
+      game.next_player
+      expect(game.players).to_not eq(initial_players)
+      expect(game.players[-1]).to eq(initial_players[0])
+    end
+  end
+  
+
+  describe '#win?' do
+    let(:player1) {double"player", :pot => 0}
+    let(:player2) {double"player", :pot => 0}
+    let(:player3) {double"player", :pot => 100}
+    let(:player4) {double"player", :pot => 0}
+
+    it 'checks if there is only one player left with money' do
+      allow(game).to receive(:players).and_return([player1,player2,player3,player4])
+      expect(game).to receive(:players)
+      expect(player1.pot).to eq(0)
+      expect(player3.pot).to eq(100)
+      expect(game.win?).to eq(true)
+    end
+  end
+
+
+end
 
 
 # it 'prints "Would you like to discard cards?"' do
